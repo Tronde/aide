@@ -29,7 +29,6 @@
     dest: /etc/{{ __aide_foo_config }}
     backup: true
     mode: 0400
-  notify: Handler for template to restart services
   tags:
     - never
     - generate_config
