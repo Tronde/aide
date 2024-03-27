@@ -35,6 +35,10 @@
     - generate_config
 
 - name: Initialize AIDE database and fetch it
+  become: true
+  tags:
+    - never
+    - init
   block:
     - name: Initialize AIDE database
       ansible.builtin.command:
@@ -48,12 +52,12 @@
     - name: Remove remote AIDE database file
       ansible.builtin.command:
         cmd: rm /var/lib/aide/aide.db.new.gz
+
+- name: Check AIDE integrity
   become: true
   tags:
     - never
-    - init
-
-- name: Check AIDE integrity
+    - check
   block:
     - name: Copy AIDE reference database to remote
       ansible.builtin.copy:
@@ -71,12 +75,12 @@
     - name: Output AIDE check results
       ansible.builtin.debug:
         var: __aide_check_output
+
+- name: Update AIDE database and fetch it
   become: true
   tags:
     - never
-    - check
-
-- name: Update AIDE database and fetch it
+    - update
   block:
     - name: Update AIDE database
       ansible.builtin.command:
@@ -90,7 +94,3 @@
     - name: Remove remote AIDE database file
       ansible.builtin.command:
         cmd: rm /var/lib/aide/aide.db.new.gz
-  become: true
-  tags:
-    - never
-    - update
