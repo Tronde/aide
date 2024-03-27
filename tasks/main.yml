@@ -5,23 +5,92 @@
 
 # Examples of some tasks:
 - name: Ensure required packages are installed
-  package:
-    name: "{{ __template_packages }}"
+  ansible.builtin.package:
+    name: "{{ __aide_packages }}"
     state: present
-    use: "{{ (__template_is_ostree | d(false)) |
+    use: "{{ (__aide_is_ostree | d(false)) |
              ternary('ansible.posix.rhel_rpm_ostree', omit) }}"
+  tags:
+    - never
+    - install
 
 - name: Ensure required services are enabled and started
-  service:
+  ansible.builtin.service:
     name: "{{ item }}"
     state: started
     enabled: true
-  loop: "{{ __template_services }}"
+  loop: "{{ __aide_services }}"
+  tags:
+    - never
 
-- name: Generate /etc/{{ __template_foo_config }}
-  template:
-    src: "{{ __template_foo_config }}.j2"
-    dest: /etc/{{ __template_foo_config }}
+- name: Generate /etc/{{ __aide_foo_config }}
+  ansible.builtin.template:
+    src: "{{ __aide_foo_config }}.j2"
+    dest: /etc/{{ __aide_foo_config }}
     backup: true
     mode: 0400
   notify: Handler for template to restart services
+  tags:
+    - never
+    - generate_config
+
+- name: Initialize AIDE database and fetch it
+  block:
+    - name: Initialize AIDE database
+      ansible.builtin.command:
+        cmd: aide --init
+
+    - name: Fetch AIDE database
+      ansible.builtin.fetch:
+        src: /var/lib/aide/aide.db.new.gz
+        dest: "{{ aide_db_fetch_dir }}"
+
+    - name: Remove remote AIDE database file
+      ansible.builtin.command:
+        cmd: rm /var/lib/aide/aide.db.new.gz
+  become: true
+  tags:
+    - never
+    - init
+
+- name: Check AIDE integrity
+  block:
+    - name: Copy AIDE reference database to remote
+      ansible.builtin.copy:
+        src: "{{ aide_db_fetch_dir }}/{{ inventory_hostname }}/var/lib/aide/aide.db.new.gz"
+        dest: /var/lib/aide/aide.db.gz
+        owner: root
+        group: root
+        mode: 0440
+
+    - name: Check against AIDE reference database
+      ansible.builtin.command:
+        cmd: aide --check
+      register: __aide_check_output
+
+    - name: Output AIDE check results
+      ansible.builtin.debug:
+        var: __aide_check_output
+  become: true
+  tags:
+    - never
+    - check
+
+- name: Update AIDE database and fetch it
+  block:
+    - name: Update AIDE database
+      ansible.builtin.command:
+        cmd: aide --update
+
+    - name: Fetch AIDE database
+      ansible.builtin.fetch:
+        src: /var/lib/aide/aide.db.new.gz
+        dest: "{{ aide_db_fetch_dir }}"
+
+    - name: Remove remote AIDE database file
+      ansible.builtin.command:
+        cmd: rm /var/lib/aide/aide.db.new.gz
+  become: true
+  tags:
+    - never
+    - update

@@ -4,4 +4,4 @@
   service:
     name: "{{ item }}"
     state: restarted
-  loop: "{{ __template_services }}"
+  loop: "{{ __aide_services }}"
