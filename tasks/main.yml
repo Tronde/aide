@@ -88,10 +88,6 @@
       register: __aide_update_result
       failed_when: __aide_update_result.rc > 7
 
-    - name: Debug the return code
-      ansible.builtin.debug:
-        var: __aide_update_result.rc
-
     - name: Fetch AIDE database
       ansible.builtin.fetch:
         src: /var/lib/aide/aide.db.new.gz
