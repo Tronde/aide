@@ -135,26 +135,27 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <nav id="TOC">
 <h1 class="toc-title">Contents</h1>
 <ul>
-<li><a href="#requirements" id="toc-requirements">Requirements</a>
+<li><a href="#what-does-this-role-do-for-you"
+id="toc-what-does-this-role-do-for-you">What does this role do for
+you?</a></li>
+<li><a href="#how-does-the-role-do-that"
+id="toc-how-does-the-role-do-that">How does the role do that?</a>
 <ul>
-<li><a href="#collection-requirements"
-id="toc-collection-requirements">Collection requirements</a></li>
+<li><a href="#available-tags-to-control-and-use-the-role"
+id="toc-available-tags-to-control-and-use-the-role">Available tags to
+control and use the role</a></li>
 </ul></li>
+<li><a href="#what-does-this-role-not-do-for-you"
+id="toc-what-does-this-role-not-do-for-you">What does this role not do
+for you?</a></li>
+<li><a href="#requirements" id="toc-requirements">Requirements</a></li>
 <li><a href="#role-variables" id="toc-role-variables">Role Variables</a>
 <ul>
-<li><a href="#aide_foo" id="toc-aide_foo">aide_foo</a></li>
-<li><a href="#aide_bar" id="toc-aide_bar">aide_bar</a></li>
-</ul></li>
-<li><a href="#variables-exported-by-the-role"
-id="toc-variables-exported-by-the-role">Variables Exported by the
-Role</a>
-<ul>
-<li><a href="#aide_reboot_needed"
-id="toc-aide_reboot_needed">aide_reboot_needed</a></li>
+<li><a href="#aide_db_fetch_dir"
+id="toc-aide_db_fetch_dir">aide_db_fetch_dir</a></li>
 </ul></li>
 <li><a href="#example-playbook" id="toc-example-playbook">Example
 Playbook</a></li>
-<li><a href="#rpm-ostree" id="toc-rpm-ostree">rpm-ostree</a></li>
 <li><a href="#license" id="toc-license">License</a></li>
 <li><a href="#author-information" id="toc-author-information">Author
 Information</a></li>
@@ -164,74 +165,95 @@ Information</a></li>
 <p><img
 src="https://github.com/linux-system-roles/aide/workflows/tox/badge.svg"
 alt="aide" /></p>
-<p>An ansible role that installs and configures the Advanced Intrusion
-Detection Environment (AIDE). For Day 2 tasks it can run integrity
-checks and update the AIDE database.</p>
+<p>An ansible role that installs and configures the <a
+href="https://aide.github.io">Advanced Intrusion Detectio Environment
+(AIDE)</a>. For Day 2 tasks it can run integrity checks and update the
+AIDE database.</p>
 <p><em>Notice:</em> This is a very early stage of a work in progress.
-Please use with extreme caution at it might not be ready for usage.</p>
+Please use with extreme caution as it might break your system.</p>
+<h1 id="what-does-this-role-do-for-you">What does this role do for
+you?</h1>
+<ul>
+<li>It ensures that the <code>aide</code> package is installed on the
+remote nodes</li>
+<li>As an optional task it can generate the <code>/etc/aide.conf</code>
+file and template it out to the remote nodes</li>
+<li>It initializes the AIDE database</li>
+<li>The AIDE databases from the remote nodes are stored in a central
+directory on the controller node</li>
+<li>It runs AIDE integrity checks on the remote nodes</li>
+<li>It updates the AIDE databases and stores them on the controller
+node</li>
+</ul>
+<h1 id="how-does-the-role-do-that">How does the role do that?</h1>
+<ul>
+<li>The role is controlled by using <a
+href="https://docs.ansible.com/ansible/latest/playbook_guide/playbooks_tags.html">Ansible
+Tags</a></li>
+<li>If you run the playbook without specifying any tag the role will
+change nothing on your remote nodes</li>
+<li>To execute some supported use cases you need to explicitly specify
+one or more of the following tags</li>
+</ul>
+<h2 id="available-tags-to-control-and-use-the-role">Available tags to
+control and use the role</h2>
+<ul>
+<li><strong>install</strong> - With this tag the role ensures that the
+<code>aide</code> package is installed on the remote nodes</li>
+<li><strong>generate_config</strong> - Generates the file
+<code>/etc/aide.conf</code> using <code>templates/aide.conf.j2</code>;
+the template needs to be adjusted to fit your requirements; if you do
+not use this tag the default configuration file shipped with the
+<code>aide</code> package will be used</li>
+<li><strong>init</strong> - Initializes the AIDE database and fetches it
+from the remote nodes to store it on the controller node</li>
+<li><strong>check</strong> - Runs an integrity check on the remote
+nodes</li>
+<li><strong>update</strong> - Updates the AIDE database and stores it on
+the controller node</li>
+</ul>
+<h1 id="what-does-this-role-not-do-for-you">What does this role not do
+for you?</h1>
+<ul>
+<li>It does not explain how to create a good AIDE configuration that
+suits your requirements; that task remains for you to accomplish</li>
+</ul>
 <h1 id="requirements">Requirements</h1>
-<p>Any prerequisites that may not be covered by Ansible itself or the
-role should be mentioned here. This includes platform dependencies not
-managed by the role, hardware requirements, external collections, etc.
-There should be a distinction between <em>control node</em> requirements
-(like collections) and <em>managed node</em> requirements (like special
-hardware, platform provisioning).</p>
-<h2 id="collection-requirements">Collection requirements</h2>
-<p>For instance, if the role depends on some collections and has a
-<code>meta/collection-requirements.yml</code> file for installing those
-dependencies, and in order to manage <code>rpm-ostree</code> systems, it
-should be mentioned here that the user should run</p>
-<div class="sourceCode" id="cb1"><pre
-class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">ansible-galaxy</span> collection install <span class="at">-vv</span> <span class="at">-r</span> meta/collection-requirements.yml</span></code></pre></div>
-<p>on the <em>control node</em> before using the role.</p>
+<p>This role has no special requirements as it uses
+<code>ansible.builtin</code> modules only.</p>
 <h1 id="role-variables">Role Variables</h1>
-<p>A description of all input variables (i.e. variables that are defined
-in <code>defaults/main.yml</code>) for the role should go here as these
-form an API of the role. Each variable should have its own section
-e.g.</p>
-<h2 id="aide_foo">aide_foo</h2>
-<p>This variable is required. It is a string that lists the foo of the
-role. There is no default value.</p>
-<h2 id="aide_bar">aide_bar</h2>
-<p>This variable is optional. It is a boolean that tells the role to
-disable bar. The default value is <code>true</code>.</p>
-<p>Variables that are not intended as input, like variables defined in
-<code>vars/main.yml</code>, variables that are read from other roles
-and/or the global scope (ie. hostvars, group vars, etc.) can be also
-mentioned here but keep in mind that as these are probably not part of
-the role API they may change during the lifetime.</p>
+<h2 id="aide_db_fetch_dir">aide_db_fetch_dir</h2>
+<p>This variable takes a string to specify the directory on the Ansible
+Control Node (ACN) where the role will store the AIDE database fetched
+from the remote nodes. The default value is <code>files</code> which is
+expected to be a directory in the same directory as the playbook.</p>
+<p>In case you like to store the fetched AIDE database files somewhere
+else you need to specify a different path here.</p>
 <p>Example of setting the variables:</p>
-<div class="sourceCode" id="cb2"><pre
-class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">aide_foo</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;oof&quot;</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">aide_bar</span><span class="kw">:</span><span class="at"> </span><span class="ch">false</span></span></code></pre></div>
-<h1 id="variables-exported-by-the-role">Variables Exported by the
-Role</h1>
-<p>This section is optional. Some roles may export variables for
-playbooks to use later. These are analogous to "return values" in
-Ansible modules. For example, if a role performs some action that will
-require a system reboot, but the user wants to defer the reboot, the
-role might set a variable like <code>aide_reboot_needed: true</code>
-that the playbook can use to reboot at a more convenient time.</p>
-<p>Example:</p>
-<h2 id="aide_reboot_needed">aide_reboot_needed</h2>
-<p>Default <code>false</code> - if <code>true</code>, this means a
-reboot is needed to apply the changes made by the role</p>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">aide_db_fetch_dir</span><span class="kw">:</span><span class="at"> files</span></span></code></pre></div>
 <h1 id="example-playbook">Example Playbook</h1>
 <p>Including an example of how to use your role (for instance, with
 variables passed in as parameters) is always nice for users too:</p>
-<div class="sourceCode" id="cb3"><pre
-class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">-</span><span class="at"> </span><span class="fu">name</span><span class="kw">:</span><span class="at"> Manage the aide subsystem</span></span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">hosts</span><span class="kw">:</span><span class="at"> all</span></span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">vars</span><span class="kw">:</span></span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">aide_foo</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;foo foo!&quot;</span></span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">aide_bar</span><span class="kw">:</span><span class="at"> </span><span class="ch">false</span></span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">roles</span><span class="kw">:</span></span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="kw">-</span><span class="at"> linux-system-roles.aide</span></span></code></pre></div>
-<p>More examples can be provided in the <a
-href="examples"><code>examples/</code></a> directory. These can be
-useful, especially for documentation.</p>
-<h1 id="rpm-ostree">rpm-ostree</h1>
-<p>See README-ostree.md</p>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="an">SPDX-License-Identifier:</span><span class="co"> MIT</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="pp">---</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="kw">-</span><span class="at"> </span><span class="fu">name</span><span class="kw">:</span><span class="at"> Example aide role invocation</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">hosts</span><span class="kw">:</span><span class="at"> targets</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">tasks</span><span class="kw">:</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="kw">-</span><span class="at"> </span><span class="fu">name</span><span class="kw">:</span><span class="at"> Include role aide</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">tags</span><span class="kw">:</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="kw">-</span><span class="at"> install</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="kw">-</span><span class="at"> generate_config</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="kw">-</span><span class="at"> init</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="kw">-</span><span class="at"> check</span></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="kw">-</span><span class="at"> update</span></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">vars</span><span class="kw">:</span></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">aide_db_fetch_dir</span><span class="kw">:</span><span class="at"> files</span></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">ansible.builtin.include_role</span><span class="kw">:</span></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">name</span><span class="kw">:</span><span class="at"> aide</span></span></code></pre></div>
+<p>More examples can be found in the <a
+href="examples"><code>examples/</code></a> directory.</p>
 <h1 id="license">License</h1>
 <p>MIT.</p>
 <h1 id="author-information">Author Information</h1>
