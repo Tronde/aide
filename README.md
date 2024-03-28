@@ -11,30 +11,30 @@ extreme caution as it might break your system.
 
 ## What does this role do for you?
 
-  * It ensures that the `aide` package is installed on the remote nodes
-  * As an optional task it can generate the `/etc/aide.conf` file and template it out to the remote nodes
-  * It initializes the AIDE database
-  * The AIDE databases from the remote nodes are stored in a central directory on the controller node
-  * It runs AIDE integrity checks on the remote nodes
-  * It updates the AIDE databases and stores them on the controller node
+* It ensures that the `aide` package is installed on the remote nodes
+* As an optional task it can generate the `/etc/aide.conf` file and template it out to the remote nodes
+* It initializes the AIDE database
+* The AIDE databases from the remote nodes are stored in a central directory on the controller node
+* It runs AIDE integrity checks on the remote nodes
+* It updates the AIDE databases and stores them on the controller node
 
 ## How does the role do that?
 
-  * The role is controlled by using [Ansible Tags](https://docs.ansible.com/ansible/latest/playbook_guide/playbooks_tags.html)
-  * If you run the playbook without specifying any tag the role will change nothing on your remote nodes
-  * To execute some supported use cases you need to explicitly specify one or more of the following tags
+* The role is controlled by using [Ansible Tags](https://docs.ansible.com/ansible/latest/playbook_guide/playbooks_tags.html)
+* If you run the playbook without specifying any tag the role will change nothing on your remote nodes
+* To execute some supported use cases you need to explicitly specify one or more of the following tags
 
 ### Available tags to control and use the role
 
-  * __install__ - With this tag the role ensures that the `aide` package is installed on the remote nodes
-  * __generate_config__ - Generates the file `/etc/aide.conf` using `templates/aide.conf.j2`; the template needs to be adjusted to fit your requirements; if you do not use this tag the default configuration file shipped with the `aide` package will be used
-  * __init__ - Initializes the AIDE database and fetches it from the remote nodes to store it on the controller node
-  * __check__ - Runs an integrity check on the remote nodes
-  * __update__ - Updates the AIDE database and stores it on the controller node
+* __install__ - With this tag the role ensures that the `aide` package is installed on the remote nodes
+* __generate_config__ - Generates the file `/etc/aide.conf` using `templates/aide.conf.j2`; the template needs to be adjusted to fit your requirements; if you do not use this tag the default configuration file shipped with the `aide` package will be used
+* __init__ - Initializes the AIDE database and fetches it from the remote nodes to store it on the controller node
+* __check__ - Runs an integrity check on the remote nodes
+* __update__ - Updates the AIDE database and stores it on the controller node
 
 ## What does this role not do for you?
 
-  * It does not explain how to create a good AIDE configuration that suits your requirements; that task remains for you to accomplish
+* It does not explain how to create a good AIDE configuration that suits your requirements; that task remains for you to accomplish
 
 ## Requirements
 
