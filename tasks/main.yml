@@ -60,8 +60,9 @@
   block:
     - name: Copy AIDE reference database to remote
       ansible.builtin.copy:
-        src: "{{ aide_db_fetch_dir }}/{{ inventory_hostname }}/var/lib/aide/
-              aide.db.new.gz"
+        src:
+          "{{ aide_db_fetch_dir }}/{{ inventory_hostname }}/var/lib/aide/\
+          aide.db.new.gz"
         dest: /var/lib/aide/aide.db.gz
         owner: root
         group: root
@@ -70,11 +71,7 @@
     - name: Check against AIDE reference database
       ansible.builtin.command:
         cmd: aide --check
-      register: __aide_check_output
-
-    - name: Output AIDE check results
-      ansible.builtin.debug:
-        var: __aide_check_output
+      changed_when: false
 
 - name: Update AIDE database and fetch it
   become: true
