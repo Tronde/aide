@@ -2,11 +2,11 @@
 ---
 galaxy_info:
   # Replace with role's author name:
-  author: John Doe <jdoe@corp.com>
+  author: Joerg Kastning <jkastning@my-it-brain.de>
   # Replace with the real description of what is role's purpose:
-  description: Basic template for Linux system roles
+  description: Install, configure and operate AIDE
   # Replace with the company the role's author is member of:
-  company: John Doe, Inc.
+  company: Red Hat
 
   # If the issue tracker for your role is not on github, uncomment the next
   # line and provide a value
