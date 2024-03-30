@@ -4,7 +4,7 @@
 
 ![aide](https://github.com/linux-system-roles/template/workflows/tox/badge.svg)
 
-An ansible role that installs and configures the [Advanced Intrusion Detectio Environment (AIDE)](https://aide.github.io). For Day 2 tasks it can run integrity checks and update the AIDE database.
+This is an ansible role that installs and configures the [Advanced Intrusion Detection Environment (AIDE)](https://aide.github.io). For Day 2 tasks it can run integrity checks and update the AIDE database.
 
 _Notice:_ This is a very early stage of a work in progress. Please use with
 extreme caution as it might break your system.
