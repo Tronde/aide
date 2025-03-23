@@ -1,10 +1,12 @@
-# AIDE
+# [Archived] AIDE
 
 [![ansible-lint.yml](https://github.com/linux-system-roles/template/actions/workflows/ansible-lint.yml/badge.svg)](https://github.com/linux-system-roles/template/actions/workflows/ansible-lint.yml) [![ansible-test.yml](https://github.com/linux-system-roles/template/actions/workflows/ansible-test.yml/badge.svg)](https://github.com/linux-system-roles/template/actions/workflows/ansible-test.yml) [![markdownlint.yml](https://github.com/linux-system-roles/template/actions/workflows/markdownlint.yml/badge.svg)](https://github.com/linux-system-roles/template/actions/workflows/markdownlint.yml) [![shellcheck.yml](https://github.com/linux-system-roles/template/actions/workflows/shellcheck.yml/badge.svg)](https://github.com/linux-system-roles/template/actions/workflows/shellcheck.yml) [![woke.yml](https://github.com/linux-system-roles/template/actions/workflows/woke.yml/badge.svg)](https://github.com/linux-system-roles/template/actions/workflows/woke.yml)
 
 ![aide](https://github.com/linux-system-roles/template/workflows/tox/badge.svg)
 
 This is an ansible role that installs and configures the [Advanced Intrusion Detection Environment (AIDE)](https://aide.github.io). For Day 2 tasks it can run integrity checks and update the AIDE database.
+
+_Notice:_ This repository has been used as the basis of [linux-system-roles/aide](https://github.com/linux-system-roles/aide). I has been archived as future work is going to happen in the system role.
 
 _Notice:_ This is a very early stage of a work in progress. Please use with
 extreme caution as it might break your system.
